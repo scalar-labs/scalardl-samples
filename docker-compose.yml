@@ -1,0 +1,31 @@
+version: "3"
+services:
+  cassandra:
+    image: cassandra
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    ports:
+      - "7199:7199" # JMX
+      - "7000:7000" # cluster communication
+      - "7001:7001" # cluster communication (SSL)
+      - "9042:9042" # native protocol clients
+      - "9160:9160" # thrift clients
+    networks:
+      - scalar-net
+
+  scalar-server:
+    image: scalarlabs/scalar-server
+    depends_on:
+      - cassandra
+    environment:
+      - CASSANDRA_HOST=cassandra
+    ports:
+      - "50051:50051"
+    networks:
+      - scalar-net
+
+volumes:
+  cassandra-data:
+
+networks:
+  scalar-net:
