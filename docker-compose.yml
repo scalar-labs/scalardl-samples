@@ -16,7 +16,7 @@ services:
     depends_on:
       - cassandra
     environment:
-      - CASSANDRA_HOST=cassandra
+      - SCALAR_CASSANDRA_HOST=cassandra
     ports:
       - "50051:50051"
 
