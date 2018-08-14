@@ -10,8 +10,6 @@ services:
     #   - "7001:7001" # cluster communication (SSL)
     #   - "9042:9042" # native protocol clients
     #   - "9160:9160" # thrift clients
-    networks:
-      - scalar-net
 
   scalar-server:
     image: scalarlabs/scalar-server
@@ -21,11 +19,6 @@ services:
       - CASSANDRA_HOST=cassandra
     ports:
       - "50051:50051"
-    networks:
-      - scalar-net
 
 volumes:
   cassandra-data:
-
-networks:
-  scalar-net:
