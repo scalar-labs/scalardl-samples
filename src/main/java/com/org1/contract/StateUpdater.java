@@ -25,8 +25,8 @@ public class StateUpdater extends Contract {
     }
 
     if (!asset.isPresent() || asset.get().data().get("state").getAsInt() != state) {
-      ledger.put(assetId, json);
       json.addProperty("state", state);
+      ledger.put(assetId, json);
     }
 
     return new JsonObject();
