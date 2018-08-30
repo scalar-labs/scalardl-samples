@@ -1,10 +1,10 @@
 package com.org1.contract;
 
 import com.google.gson.JsonObject;
-import com.scalar.dl.contract.Contract;
-import com.scalar.dl.exception.AssetRetrievalException;
-import com.scalar.dl.ledger.Ledger;
-import com.scalar.dl.asset.Asset;
+import com.scalar.ledger.contract.Contract;
+import com.scalar.ledger.exception.AssetRetrievalException;
+import com.scalar.ledger.ledger.Ledger;
+import com.scalar.ledger.asset.Asset;
 import java.util.Optional;
 
 public class StateUpdater extends Contract {
