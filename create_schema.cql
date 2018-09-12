@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS scalar.asset (
     age int,
     argument text,
     before_argument text,
-    before_contract_ref text,
+    before_contract_id text,
     before_hash blob,
     before_input text,
     before_output text,
