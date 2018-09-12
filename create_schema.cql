@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS scalar.asset (
     before_tx_prepared_at bigint,
     before_tx_state int,
     before_tx_version int,
-    contract_ref text,
+    contract_id text,
     hash blob,
     input text,
     output text,
@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS scalar.asset_metadata (
 
 CREATE TABLE IF NOT EXISTS scalar.contract (
     id text PRIMARY KEY,
+    name text,
     certificate_holder_id text,
     certificate_version int,
     contract_bytes blob,
