@@ -10,7 +10,7 @@ import java.util.Optional;
 public class StateUpdater extends Contract {
 
   @Override
-  public JsonObject invoke(Ledger ledger, JsonObject argument) {
+  public JsonObject invoke(Ledger ledger, JsonObject argument, Optional<JsonObject> properties) {
     JsonObject json = new JsonObject();
     String assetId = argument.get("asset_id").getAsString();
     int state = argument.get("state").getAsInt();
