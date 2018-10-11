@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS scalar.contract (
     certificate_holder_id text,
     certificate_version int,
     contract_bytes blob,
+    properties text,
     registered_at bigint,
     signature blob
 );
