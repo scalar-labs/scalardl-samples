@@ -31,7 +31,7 @@ services:
     build: ./cfssl
     volumes:
       - ./cfssl/data:/cfssl/data
-    command: /bin/false
+    command: /bin/true
 
   cfssl-serve:
     image: scalar-samples-cfssl
