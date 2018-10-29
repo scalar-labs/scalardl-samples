@@ -23,10 +23,10 @@ services:
 
   cfssl-init:
     # This service should be run separately before two services below
-    # (cfssl-serve and cfssl-ocsperve) with `depends_on` option, because if they
-    # start up at the same time (by commands like `docker-compose up`), they
-    # both attempt to generate the same missing certificate files, which results
-    # in a race condition.
+    # (cfssl-serve and cfssl-ocspserve) with `depends_on` option, because if
+    # they start up at the same time (by commands like `docker-compose up`),
+    # they both attempt to generate the same missing certificate files, which
+    # results in a race condition.
     image: scalar-samples-cfssl
     build: ./cfssl
     volumes:
