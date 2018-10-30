@@ -21,5 +21,39 @@ services:
     ports:
       - "50051:50051"
 
+  cfssl-init:
+    # This service should be run separately before two services below
+    # (cfssl-serve and cfssl-ocspserve) with `depends_on` option, because if
+    # they start up at the same time (by commands like `docker-compose up`),
+    # they both attempt to generate the same missing certificate files, which
+    # results in a race condition.
+    image: scalar-samples-cfssl
+    build: ./cfssl
+    volumes:
+      - ./cfssl/data:/cfssl/data
+    command: /bin/true
+
+  cfssl-serve:
+    image: scalar-samples-cfssl
+    build: ./cfssl
+    volumes:
+      - ./cfssl/data:/cfssl/data
+    depends_on:
+      - cfssl-init
+    command: serve
+    ports:
+      - "8888:8888"
+
+  cfssl-ocspserve:
+    image: scalar-samples-cfssl
+    build: ./cfssl
+    volumes:
+      - ./cfssl/data:/cfssl/data
+    depends_on:
+      - cfssl-init
+    command: ocspserve
+    ports:
+      - "8889:8889"
+
 volumes:
   cassandra-data:
