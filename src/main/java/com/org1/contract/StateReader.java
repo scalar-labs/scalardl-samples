@@ -1,12 +1,12 @@
 package com.org1.contract;
 
-import com.google.gson.JsonObject;
 import com.scalar.ledger.asset.Asset;
 import com.scalar.ledger.asset.InternalAsset;
 import com.scalar.ledger.contract.Contract;
-import com.scalar.ledger.exception.AssetRetrievalException;
 import com.scalar.ledger.ledger.Ledger;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -14,27 +14,21 @@ public class StateReader extends Contract {
 
   @Override
   public JsonObject invoke(Ledger ledger, JsonObject argument, Optional<JsonObject> properties) {
-    String assetId = argument.get("asset_id").getAsString();
-    JsonObject response = new JsonObject();
+    String assetId = argument.getString("asset_id");
 
-    Optional<Asset> asset = null;
-    try {
-      asset = ledger.get(assetId);
-    } catch (AssetRetrievalException e) {
-      response.addProperty("error_message", e.getMessage());
-      return response;
-    }
-
+    Optional<Asset> asset = ledger.get(assetId);
     InternalAsset internal = (InternalAsset) asset.get();
-    response.addProperty("age", internal.age());
-    response.add("input", internal.input());
-    response.add("output", internal.data());
-    response.addProperty("contract_id", internal.contractId());
-    response.add("argument", internal.argument());
+
     Base64.Encoder encoder = Base64.getEncoder();
-    response.addProperty("signature", encoder.encodeToString(internal.signature()));
-    response.addProperty("prev_hash", encoder.encodeToString(internal.prevHash()));
-    response.addProperty("hash", encoder.encodeToString(internal.hash()));
-    return response;
+    return Json.createObjectBuilder()
+        .add("age", internal.age())
+        .add("input", internal.input())
+        .add("output", internal.data())
+        .add("contract_id", internal.contractId())
+        .add("argument", internal.argument())
+        .add("signature", encoder.encodeToString(internal.signature()))
+        .add("prev_hash", encoder.encodeToString(internal.prevHash()))
+        .add("hash", encoder.encodeToString(internal.hash()))
+        .build();
   }
 }
