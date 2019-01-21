@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS scalar.asset (
     tx_state int,
     tx_version int,
     PRIMARY KEY (id, age)
-);
+) WITH compaction = { 'class' : 'LeveledCompactionStrategy' };
 
 CREATE TABLE IF NOT EXISTS scalar.asset_metadata (
     asset_id text,
@@ -47,17 +47,18 @@ CREATE TABLE IF NOT EXISTS scalar.asset_metadata (
     tx_state int,
     tx_version int,
     PRIMARY KEY (asset_id)
-);
+) WITH compaction = { 'class' : 'LeveledCompactionStrategy' };
 
 CREATE TABLE IF NOT EXISTS scalar.contract (
-    id text PRIMARY KEY,
-    name text,
-    certificate_holder_id text,
-    certificate_version int,
-    contract_bytes blob,
+    cert_holder_id text,
+    cert_version int,
+    id text,
+    binary_name text,
+    byte_code blob,
     properties text,
     registered_at bigint,
-    signature blob
+    signature blob,
+    PRIMARY KEY (cert_holder_id, cert_version, id)
 );
 
 CREATE TABLE IF NOT EXISTS scalar.certificate (
