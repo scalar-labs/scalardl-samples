@@ -50,9 +50,9 @@ CREATE TABLE IF NOT EXISTS scalar.asset_metadata (
 ) WITH compaction = { 'class' : 'LeveledCompactionStrategy' };
 
 CREATE TABLE IF NOT EXISTS scalar.contract (
+    id text,
     cert_holder_id text,
     cert_version int,
-    id text,
     binary_name text,
     byte_code blob,
     properties text,
@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS scalar.contract (
     signature blob,
     PRIMARY KEY (cert_holder_id, cert_version, id)
 );
+CREATE INDEX IF NOT EXISTS ON scalar.contract (id);
 
 CREATE TABLE IF NOT EXISTS scalar.certificate (
     holder_id text,
