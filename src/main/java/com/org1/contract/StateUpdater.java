@@ -1,12 +1,11 @@
 package com.org1.contract;
 
+import com.scalar.ledger.asset.Asset;
 import com.scalar.ledger.contract.Contract;
 import com.scalar.ledger.ledger.Ledger;
-import com.scalar.ledger.asset.Asset;
-
+import java.util.Optional;
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.util.Optional;
 
 public class StateUpdater extends Contract {
 
