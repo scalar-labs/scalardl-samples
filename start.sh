@@ -2,8 +2,8 @@
 
 print_usage_and_exit() {
   echo "Usage: $0 [-hs]"
-  echo "  -s apply schema"
-  echo "  -h display help"
+  echo "  -s  Apply schema"
+  echo "  -h  Print out this message and exit"
   exit 1
 }
 
