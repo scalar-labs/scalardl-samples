@@ -8,7 +8,7 @@ print_usage_and_exit() {
 }
 
 while getopts 'hs' opt; do
-  case $opt in 
+  case $opt in
     s) apply_schema=true ;;
     *) print_usage_and_exit ;;
   esac
@@ -29,5 +29,6 @@ if [ $apply_schema ]; then
       exit 1
     fi
   done
+  echo "schema successfully applied"
+  exit 0
 fi
-
