@@ -34,18 +34,7 @@ CREATE TABLE IF NOT EXISTS scalar.asset (
 
 CREATE TABLE IF NOT EXISTS scalar.asset_metadata (
     asset_id text,
-    before_latest_age int,
-    before_tx_committed_at bigint,
-    before_tx_id text,
-    before_tx_prepared_at bigint,
-    before_tx_state int,
-    before_tx_version int,
-    latest_age int,
-    tx_committed_at bigint,
-    tx_id text,
-    tx_prepared_at bigint,
-    tx_state int,
-    tx_version int,
+    latest_age int,  // TODO: rename
     PRIMARY KEY (asset_id)
 ) WITH compaction = { 'class' : 'LeveledCompactionStrategy' };
 
@@ -54,13 +43,18 @@ CREATE TABLE IF NOT EXISTS scalar.contract (
     cert_holder_id text,
     cert_version int,
     binary_name text,
-    byte_code blob,
     properties text,
     registered_at bigint,
     signature blob,
     PRIMARY KEY (cert_holder_id, cert_version, id)
-);
+) WITH compaction = { 'class' : 'LeveledCompactionStrategy' };
 CREATE INDEX IF NOT EXISTS ON scalar.contract (id);
+
+CREATE TABLE IF NOT EXISTS scalar.contract_class (
+    binary_name text,
+    byte_code blob,
+    PRIMARY KEY (binary_name)
+);
 
 CREATE TABLE IF NOT EXISTS scalar.certificate (
     holder_id text,
