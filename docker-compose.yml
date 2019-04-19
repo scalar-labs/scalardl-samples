@@ -18,6 +18,11 @@ services:
       - cassandra
     environment:
       - SCALAR_CASSANDRA_HOST=cassandra
+    networks:
+      default:
+        aliases:
+          - scalar-server
+
     ports:
       - "50051:50051"
 
