@@ -23,8 +23,15 @@ services:
         aliases:
           - scalar-server
 
+  envoy:
+    image: envoyproxy/envoy:v1.10.0
     ports:
       - "50051:50051"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      - scalar-server
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml -l trace
 
   cfssl-init:
     # This service should be run separately before two services below
