@@ -12,14 +12,26 @@ services:
     #   - "9042:9042" # native protocol clients
     #   - "9160:9160" # thrift clients
 
-  scalar-server:
+  scalar-ledger:
     image: scalarlabs/scalar-ledger:1.1.0
     depends_on:
       - cassandra
     environment:
       - SCALAR_CASSANDRA_HOST=cassandra
+    networks:
+      default:
+        aliases:
+          - scalar-ledger
+
+  envoy:
+    image: envoyproxy/envoy:v1.10.0
     ports:
       - "50051:50051"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      - scalar-ledger
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml -l trace
 
   cfssl-init:
     # This service should be run separately before two services below
