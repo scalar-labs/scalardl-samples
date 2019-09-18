@@ -56,6 +56,14 @@ CREATE TABLE IF NOT EXISTS scalar.contract_class (
     PRIMARY KEY (binary_name)
 );
 
+CREATE TABLE IF NOT EXISTS scalar.udf (
+    id text,
+    binary_name text,
+    byte_code blob,
+    registered_at bigint,
+    PRIMARY KEY (id)
+) WITH compaction = { 'class' : 'LeveledCompactionStrategy' };
+
 CREATE TABLE IF NOT EXISTS scalar.certificate (
     holder_id text,
     version int,
