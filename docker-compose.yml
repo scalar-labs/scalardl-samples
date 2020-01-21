@@ -13,7 +13,7 @@ services:
     #   - "9160:9160" # thrift clients
 
   scalar-ledger:
-    image: scalarlabs/scalar-ledger:1.3.1
+    image: scalarlabs/scalar-ledger:2.0.0
     depends_on:
       - cassandra
     environment:
@@ -32,7 +32,7 @@ services:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
     depends_on:
       - scalar-ledger
-    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml -l trace
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
 
   cfssl-init:
     # This service should be run separately before two services below

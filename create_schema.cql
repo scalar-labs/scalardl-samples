@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS scalar.asset (
 
 CREATE TABLE IF NOT EXISTS scalar.asset_metadata (
     asset_id text,
-    latest_age int,  // TODO: rename
+    latest_age int,
     PRIMARY KEY (asset_id)
 ) WITH compaction = { 'class' : 'LeveledCompactionStrategy' };
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS scalar.contract_class (
     PRIMARY KEY (binary_name)
 );
 
-CREATE TABLE IF NOT EXISTS scalar.udf (
+CREATE TABLE IF NOT EXISTS scalar.function (
     id text,
     binary_name text,
     byte_code blob,
