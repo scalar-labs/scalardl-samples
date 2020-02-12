@@ -13,7 +13,7 @@ services:
     #   - "9160:9160" # thrift clients
 
   scalar-ledger:
-    image: scalarlabs/scalar-ledger:2.0.1
+    image: scalarlabs/scalar-ledger:2.0.2
     depends_on:
       - cassandra
     environment:
