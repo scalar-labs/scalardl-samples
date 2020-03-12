@@ -13,7 +13,7 @@ services:
     #   - "9160:9160" # thrift clients
 
   scalar-ledger:
-    image: scalarlabs/scalar-ledger:2.0.2
+    image: scalarlabs/scalar-ledger:2.0.3
     depends_on:
       - cassandra
     environment:
@@ -26,6 +26,7 @@ services:
   envoy:
     image: envoyproxy/envoy:v1.10.0
     ports:
+      - "9901:9901"
       - "50051:50051"
       - "50052:50052"
     volumes:
