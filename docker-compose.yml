@@ -26,6 +26,7 @@ services:
   envoy:
     image: envoyproxy/envoy:v1.12.2
     ports:
+      - "9901:9901"
       - "50051:50051"
       - "50052:50052"
     volumes:
