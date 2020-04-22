@@ -13,11 +13,15 @@ services:
     #   - "9160:9160" # thrift clients
 
   scalar-ledger:
-    image: scalarlabs/scalar-ledger:2.0.3
+    image: scalarlabs/scalar-ledger:2.0.4
+    volumes:
+      - ./fixture/bar-key.pem:/scalar/bar-key.pem
     depends_on:
       - cassandra
     environment:
-      - SCALAR_CASSANDRA_HOST=cassandra
+      - SCALAR_DB_CONTACT_POINTS=cassandra
+      - SCALAR_DL_LEDGER_PROOF_ENABLED=true
+      - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/bar-key.pem
     networks:
       default:
         aliases:
