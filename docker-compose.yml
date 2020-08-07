@@ -17,14 +17,6 @@ services:
     #  - "9042:9042" # native protocol clients
     #  - "9160:9160" # thrift clients
 
-  cassy:
-    image: scalarlabs/cassy:1.2.0
-    container_name: "scalar-samples-cassy-1"
-    ports:
-      - "20051:20051"
-    networks:
-      - scalar-ledger
-
   scalar-ledger:
     image: scalarlabs/scalar-ledger:2.0.4
     container_name: "scalar-samples-scalar-ledger-1"
