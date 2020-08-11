@@ -1,7 +1,8 @@
-version: "3"
+version: "3.5"
 services:
   cassandra:
     image: cassandra:3.11
+    container_name: "scalar-samples-cassandra-1"
     volumes:
       - cassandra-data:/var/lib/cassandra
       - ./create_schema.cql:/create_schema.cql
@@ -11,9 +12,12 @@ services:
     #   - "7001:7001" # cluster communication (SSL)
     #   - "9042:9042" # native protocol clients
     #   - "9160:9160" # thrift clients
+    networks:
+      - scalar-ledger
 
   scalar-ledger:
     image: scalarlabs/scalar-ledger:2.0.4
+    container_name: "scalar-samples-scalar-ledger-1"
     volumes:
       - ./fixture/bar-key.pem:/scalar/bar-key.pem
     depends_on:
@@ -23,12 +27,11 @@ services:
       - SCALAR_DL_LEDGER_PROOF_ENABLED=true
       - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/bar-key.pem
     networks:
-      default:
-        aliases:
-          - scalar-ledger
+      - scalar-ledger
 
   envoy:
     image: envoyproxy/envoy:v1.12.2
+    container_name: "scalar-samples-envoy-1"
     ports:
       - "9901:9901"
       - "50051:50051"
@@ -38,6 +41,8 @@ services:
     depends_on:
       - scalar-ledger
     command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
+    networks:
+      - scalar-ledger
 
   cfssl-init:
     # This service should be run separately before two services below
@@ -46,12 +51,16 @@ services:
     # they both attempt to generate the same missing certificate files, which
     # results in a race condition.
     image: scalarlabs/scalar-cfssl:1.0.0
+    container_name: "scalar-samples-cfssl-init-1"
     volumes:
       - ./cfssl/data:/cfssl/data
     command: /bin/true
+    networks:
+      - scalar-ledger
 
   cfssl-serve:
     image: scalarlabs/scalar-cfssl:1.0.0
+    container_name: "scalar-samples-cfssl-serve-1"
     volumes:
       - ./cfssl/data:/cfssl/data
     depends_on:
@@ -59,9 +68,12 @@ services:
     command: serve
     ports:
       - "8888:8888"
+    networks:
+      - scalar-ledger
 
   cfssl-ocspserve:
     image: scalarlabs/scalar-cfssl:1.0.0
+    container_name: "scalar-samples-cfssl-ocspserve-1"
     volumes:
       - ./cfssl/data:/cfssl/data
     depends_on:
@@ -69,6 +81,12 @@ services:
     command: ocspserve
     ports:
       - "8889:8889"
+    networks:
+      - scalar-ledger
 
 volumes:
   cassandra-data:
+
+networks:
+  scalar-ledger:
+    name: scalar-ledger
