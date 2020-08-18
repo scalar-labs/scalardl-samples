@@ -15,6 +15,17 @@ services:
     networks:
       - scalar-ledger
 
+  scalardl-schema-loader-cassandra:
+    image: scalarlabs/scalardl-schema-loader-cassandra:1.0.0
+    environment:
+      - CASSANDRA_HOST=cassandra
+      - CASSANDRA_PORT=9042
+      - CASSANDRA_USERNAME=
+      - CASSANDRA_PASSWORD=
+      - CASSANDRA_REPLICATION_FACTOR=1
+    networks:
+      - scalar-ledger
+
   scalar-ledger:
     image: scalarlabs/scalar-ledger:2.0.4
     container_name: "scalar-samples-scalar-ledger-1"
