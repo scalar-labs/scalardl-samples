@@ -11,6 +11,9 @@ services:
     #   - "7001:7001" # cluster communication (SSL)
     #   - "9042:9042" # native protocol clients
     #   - "9160:9160" # thrift clients
+    environment:
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
     networks:
       - scalar-ledger
 
