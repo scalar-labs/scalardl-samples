@@ -29,7 +29,7 @@ services:
       - scalar-ledger
 
   scalar-ledger:
-    image: scalarlabs/scalar-ledger:2.0.4
+    image: scalarlabs/scalar-ledger:2.0.7
     container_name: "scalar-samples-scalar-ledger-1"
     volumes:
       - ./fixture/bar-key.pem:/scalar/bar-key.pem
