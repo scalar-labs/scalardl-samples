@@ -5,13 +5,26 @@ services:
     container_name: "scalar-samples-cassandra-1"
     volumes:
       - cassandra-data:/var/lib/cassandra
-      - ./create_schema.cql:/create_schema.cql
     # ports:
     #   - "7199:7199" # JMX
     #   - "7000:7000" # cluster communication
     #   - "7001:7001" # cluster communication (SSL)
     #   - "9042:9042" # native protocol clients
     #   - "9160:9160" # thrift clients
+    environment:
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    networks:
+      - scalar-ledger
+
+  scalardl-schema-loader-cassandra:
+    image: scalarlabs/scalardl-schema-loader-cassandra:1.0.0
+    environment:
+      - CASSANDRA_HOST=cassandra
+      - CASSANDRA_PORT=9042
+      - CASSANDRA_USERNAME=
+      - CASSANDRA_PASSWORD=
+      - CASSANDRA_REPLICATION_FACTOR=1
     networks:
       - scalar-ledger
 
