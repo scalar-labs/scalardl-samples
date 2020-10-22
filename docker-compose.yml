@@ -42,6 +42,7 @@ services:
       - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/bar-key.pem
     networks:
       - scalar-ledger
+    # Overriding the CMD instruction in the scalar-ledger Dockerfile to add the -wait option.
     command: |
       dockerize -template ledger.properties.tmpl:ledger.properties
       -template log4j.properties.tmpl:log4j.properties
