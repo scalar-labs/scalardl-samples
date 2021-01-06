@@ -29,7 +29,7 @@ services:
       - scalar-ledger
 
   scalar-ledger:
-    image: scalarlabs/scalar-ledger:2.0.8
+    image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
     container_name: "scalar-samples-scalar-ledger-1"
     volumes:
       - ./fixture/bar-key.pem:/scalar/bar-key.pem
@@ -70,7 +70,7 @@ services:
     # they start up at the same time (by commands like `docker-compose up`),
     # they both attempt to generate the same missing certificate files, which
     # results in a race condition.
-    image: scalarlabs/scalar-cfssl:1.0.0
+    image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
     container_name: "scalar-samples-cfssl-init-1"
     volumes:
       - ./cfssl/data:/cfssl/data
@@ -79,7 +79,7 @@ services:
       - scalar-ledger
 
   cfssl-serve:
-    image: scalarlabs/scalar-cfssl:1.0.0
+    image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
     container_name: "scalar-samples-cfssl-serve-1"
     volumes:
       - ./cfssl/data:/cfssl/data
@@ -92,7 +92,7 @@ services:
       - scalar-ledger
 
   cfssl-ocspserve:
-    image: scalarlabs/scalar-cfssl:1.0.0
+    image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
     container_name: "scalar-samples-cfssl-ocspserve-1"
     volumes:
       - ./cfssl/data:/cfssl/data
