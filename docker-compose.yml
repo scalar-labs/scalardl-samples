@@ -18,7 +18,7 @@ services:
       - scalar-ledger
 
   scalardl-schema-loader-cassandra:
-    image: scalarlabs/scalardl-schema-loader-cassandra:1.0.0
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:1.3.0
     environment:
       - CASSANDRA_HOST=cassandra
       - CASSANDRA_PORT=9042
