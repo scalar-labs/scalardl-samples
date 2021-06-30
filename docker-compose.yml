@@ -17,7 +17,7 @@ services:
     networks:
       - scalar-ledger
 
-  scalardl-schema-loader-cassandra:
+  scalardl-ledger-schema-loader-cassandra:
     image: ghcr.io/scalar-labs/scalardl-schema-loader:1.3.0
     command:
       - "--cassandra"
@@ -30,17 +30,17 @@ services:
     restart: on-failure
 
   scalar-ledger:
-    image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
+    image: ghcr.io/scalar-labs/scalar-ledger:3.0.0
     container_name: "scalar-samples-scalar-ledger-1"
     volumes:
-      - ./fixture/bar-key.pem:/scalar/bar-key.pem
+      - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
     depends_on:
       - cassandra
     environment:
       - SCALAR_DB_CONTACT_POINTS=cassandra
       - SCALAR_DB_STORAGE=cassandra
       - SCALAR_DL_LEDGER_PROOF_ENABLED=true
-      - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/bar-key.pem
+      - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/ledger-key.pem
     networks:
       - scalar-ledger
     # Overriding the CMD instruction in the scalar-ledger Dockerfile to add the -wait option.
