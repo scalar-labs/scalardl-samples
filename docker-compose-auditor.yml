@@ -40,7 +40,17 @@ services:
       -wait tcp://cassandra:9042 -timeout 60s
       ./bin/scalar-auditor --config auditor.properties
 
-  envoy:
+  auditor-envoy:
+    image: envoyproxy/envoy:v1.12.2
+    container_name: "scalar-samples-auditor-envoy-1"
     ports:
+      - "9902:9902"
       - "40051:40051"
       - "40052:40052"
+    volumes:
+      - ./envoy-auditor.yaml:/etc/envoy/envoy.yaml
+    depends_on:
+      - scalar-auditor
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
+    networks:
+      - scalar-ledger

@@ -1,12 +1,12 @@
 admin:
   access_log_path: /tmp/admin_access.log
   address:
-    socket_address: { address: 0.0.0.0, port_value: 9901 }
+    socket_address: { address: 0.0.0.0, port_value: 9902 }
 static_resources:
   listeners:
   - name: listener_0
     address:
-      socket_address: { address: 0.0.0.0, port_value: 50051 }
+      socket_address: { address: 0.0.0.0, port_value: 40051 }
     filter_chains:
     - filters:
       - name: envoy.http_connection_manager
@@ -20,7 +20,7 @@ static_resources:
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: scalar-ledger }
+                route: { cluster: scalar-auditor }
               cors:
                 allow_origin_string_match:
                   - safe_regex:
@@ -36,7 +36,7 @@ static_resources:
           - name: envoy.router
   - name: listener_1
     address:
-      socket_address: { address: 0.0.0.0, port_value: 50052 }
+      socket_address: { address: 0.0.0.0, port_value: 40052 }
     filter_chains:
     - filters:
       - name: envoy.http_connection_manager
@@ -50,7 +50,7 @@ static_resources:
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: scalar-ledger-privileged }
+                route: { cluster: scalar-auditor-privileged }
               cors:
                 allow_origin_string_match:
                   - safe_regex:
@@ -65,15 +65,15 @@ static_resources:
           - name: envoy.cors
           - name: envoy.router
   clusters:
-  - name: scalar-ledger
+  - name: scalar-auditor
     connect_timeout: 0.25s
     type: strict_dns
     http2_protocol_options: {}
     lb_policy: round_robin
-    hosts: [{ socket_address: { address: scalar-ledger, port_value: 50051 }}]
-  - name: scalar-ledger-privileged
+    hosts: [{ socket_address: { address: scalar-auditor, port_value: 40051 }}]
+  - name: scalar-auditor-privileged
     connect_timeout: 0.25s
     type: strict_dns
     http2_protocol_options: {}
     lb_policy: round_robin
-    hosts: [{ socket_address: { address: scalar-ledger, port_value: 50052 }}]
+    hosts: [{ socket_address: { address: scalar-auditor, port_value: 40052 }}]
