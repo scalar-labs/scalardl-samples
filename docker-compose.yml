@@ -18,7 +18,7 @@ services:
       - scalar-ledger
 
   scalardl-ledger-schema-loader-cassandra:
-    image: ghcr.io/scalar-labs/scalardl-schema-loader:1.3.0
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:3.0.0
     command:
       - "--cassandra"
       - "-h"
