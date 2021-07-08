@@ -2,7 +2,7 @@ version: "3.5"
 services:
   cassandra:
     image: cassandra:3.11
-    container_name: "scalar-samples-cassandra-1"
+    container_name: "scalardl-samples-cassandra-1"
     volumes:
       - cassandra-data:/var/lib/cassandra
     # ports:
@@ -31,7 +31,7 @@ services:
 
   scalar-ledger:
     image: ghcr.io/scalar-labs/scalar-ledger:3.0.0
-    container_name: "scalar-samples-scalar-ledger-1"
+    container_name: "scalardl-samples-scalar-ledger-1"
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
     depends_on:
@@ -52,7 +52,7 @@ services:
 
   ledger-envoy:
     image: envoyproxy/envoy:v1.12.7
-    container_name: "scalar-samples-ledger-envoy-1"
+    container_name: "scalardl-samples-ledger-envoy-1"
     ports:
       - "9901:9901"
       - "50051:50051"
@@ -72,7 +72,7 @@ services:
     # they both attempt to generate the same missing certificate files, which
     # results in a race condition.
     image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
-    container_name: "scalar-samples-cfssl-init-1"
+    container_name: "scalardl-samples-cfssl-init-1"
     volumes:
       - ./cfssl/data:/cfssl/data
     command: /bin/true
@@ -81,7 +81,7 @@ services:
 
   cfssl-serve:
     image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
-    container_name: "scalar-samples-cfssl-serve-1"
+    container_name: "scalardl-samples-cfssl-serve-1"
     volumes:
       - ./cfssl/data:/cfssl/data
     depends_on:
@@ -94,7 +94,7 @@ services:
 
   cfssl-ocspserve:
     image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
-    container_name: "scalar-samples-cfssl-ocspserve-1"
+    container_name: "scalardl-samples-cfssl-ocspserve-1"
     volumes:
       - ./cfssl/data:/cfssl/data
     depends_on:

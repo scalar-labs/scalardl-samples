@@ -2,7 +2,7 @@
 
 * Clone this repository
 ```
-$ git clone https://github.com/scalar-labs/scalar-samples.git
+$ git clone https://github.com/scalar-labs/scalardl-samples.git
 ```
 
 - Install Scalar DL
