@@ -77,6 +77,7 @@ services:
     environment:
       - SCALAR_DB_CONTACT_POINTS=cassandra
       - SCALAR_DB_STORAGE=cassandra
+      - SCALAR_DL_AUDITOR_LEDGER_HOST=ledger-envoy
       - SCALAR_DL_AUDITOR_CERT_PATH=/scalar/auditor.pem
       - SCALAR_DL_AUDITOR_PRIVATE_KEY_PATH=/scalar/auditor-key.pem
     networks:
