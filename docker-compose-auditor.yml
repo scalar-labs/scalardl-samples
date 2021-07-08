@@ -11,7 +11,7 @@ services:
       - "-f"
       - "auditor-schema.json"
     networks:
-      - scalar-ledger
+      - scalar-network
     restart: on-failure
 
   scalar-ledger-as-client:
@@ -31,7 +31,7 @@ services:
       - SCALAR_DL_CLIENT_CERT_PATH=/scalar/ledger.pem
       - SCALAR_DL_CLIENT_PRIVATE_KEY_PATH=/scalar/ledger-key.pem
     networks:
-      - scalar-ledger
+      - scalar-network
     command: |
       dockerize -template client.properties.tmpl:client.properties
       -template log4j.properties.tmpl:log4j.properties
@@ -55,7 +55,7 @@ services:
       - SCALAR_DL_CLIENT_CERT_PATH=/scalar/auditor.pem
       - SCALAR_DL_CLIENT_PRIVATE_KEY_PATH=/scalar/auditor-key.pem
     networks:
-      - scalar-ledger
+      - scalar-network
     command: |
       dockerize -template client.properties.tmpl:client.properties
       -template log4j.properties.tmpl:log4j.properties
@@ -80,7 +80,7 @@ services:
       - SCALAR_DL_AUDITOR_CERT_PATH=/scalar/auditor.pem
       - SCALAR_DL_AUDITOR_PRIVATE_KEY_PATH=/scalar/auditor-key.pem
     networks:
-      - scalar-ledger
+      - scalar-network
     # Overriding the CMD instruction in the scalar-ledger Dockerfile to add the -wait option.
     command: |
       dockerize -template auditor.properties.tmpl:auditor.properties
@@ -101,4 +101,4 @@ services:
       - scalar-auditor
     command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
     networks:
-      - scalar-ledger
+      - scalar-network
