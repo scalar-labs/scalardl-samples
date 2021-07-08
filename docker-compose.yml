@@ -51,7 +51,7 @@ services:
       ./bin/scalar-ledger --config ledger.properties
 
   ledger-envoy:
-    image: envoyproxy/envoy:v1.12.2
+    image: envoyproxy/envoy:v1.12.7
     container_name: "scalar-samples-ledger-envoy-1"
     ports:
       - "9901:9901"
