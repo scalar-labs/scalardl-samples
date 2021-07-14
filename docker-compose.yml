@@ -30,7 +30,7 @@ services:
     restart: on-failure
 
   scalar-ledger:
-    image: ghcr.io/scalar-labs/scalar-ledger:3.0.0
+    image: ghcr.io/scalar-labs/scalar-ledger:3.0.1
     container_name: "scalardl-samples-scalar-ledger-1"
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
