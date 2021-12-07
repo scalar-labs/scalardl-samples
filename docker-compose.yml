@@ -18,19 +18,21 @@ services:
       - scalar-network
 
   scalardl-ledger-schema-loader-cassandra:
-    image: ghcr.io/scalar-labs/scalardl-schema-loader:3.2.0
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:3.3.0
+    volumes:
+      - ./scalardb.properties:/scalardb.properties
     command:
-      - "--cassandra"
-      - "-h"
-      - "cassandra"
-      - "-R"
+      - "-c"
+      - "/scalardb.properties"
+      - "--coordinator"
+      - "--replication-factor"
       - "1"
     networks:
       - scalar-network
     restart: on-failure
 
   scalar-ledger:
-    image: ghcr.io/scalar-labs/scalar-ledger:3.2.0
+    image: ghcr.io/scalar-labs/scalar-ledger:3.3.0
     container_name: "scalardl-samples-scalar-ledger-1"
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
