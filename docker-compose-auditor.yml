@@ -34,7 +34,7 @@ services:
       - scalar-network
     command: |
       dockerize -template client.properties.tmpl:client.properties
-      -template log4j.properties.tmpl:log4j.properties
+      -template log4j2.properties.tmpl:log4j2.properties
       ./client/bin/register-cert --config client.properties
     restart: on-failure:5
 
@@ -58,7 +58,7 @@ services:
       - scalar-network
     command: |
       dockerize -template client.properties.tmpl:client.properties
-      -template log4j.properties.tmpl:log4j.properties
+      -template log4j2.properties.tmpl:log4j2.properties
       ./client/bin/register-cert --config client.properties
     restart: on-failure:5
 
@@ -85,7 +85,7 @@ services:
     # Overriding the CMD instruction in the scalar-ledger Dockerfile to add the -wait option.
     command: |
       dockerize -template auditor.properties.tmpl:auditor.properties
-      -template log4j.properties.tmpl:log4j.properties
+      -template log4j2.properties.tmpl:log4j2.properties
       -wait tcp://cassandra:9042 -timeout 60s
       ./bin/scalar-auditor --config auditor.properties
 
