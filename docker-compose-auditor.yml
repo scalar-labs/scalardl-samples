@@ -92,7 +92,7 @@ services:
       ./bin/scalar-auditor --config auditor.properties
 
   auditor-envoy:
-    image: envoyproxy/envoy:v1.12.7
+    image: envoyproxy/envoy:v1.21.0
     container_name: "scalardl-samples-auditor-envoy-1"
     ports:
       - "9902:9902"
