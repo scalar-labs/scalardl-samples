@@ -1,7 +1,7 @@
 version: "3.5"
 services:
   scalardl-auditor-schema-loader-cassandra:
-    image: ghcr.io/scalar-labs/scalardl-schema-loader:3.2.1
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:3.2.4
     environment:
       - SCHEMA_TYPE=auditor
     command:
