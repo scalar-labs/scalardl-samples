@@ -21,7 +21,7 @@ public class StateReader extends JacksonBasedContract {
     if (!argument.has("asset_id")) {
       // ContractContextException is the only throwable exception in a contract and
       // it should be thrown when a contract faces some non-recoverable error
-      throw new ContractContextException("please set asset_id and state in the argument");
+      throw new ContractContextException("please set asset_id in the argument");
     }
 
     String assetId = argument.get("asset_id").asText();
