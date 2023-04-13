@@ -16,11 +16,20 @@ services:
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
     networks:
       - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh < /dev/null || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
 
   scalardl-ledger-schema-loader-cassandra:
     image: ghcr.io/scalar-labs/scalardl-schema-loader:3.7.0
     volumes:
       - ./scalardb.properties:/scalardb.properties
+    depends_on:
+      cassandra:
+        condition: service_healthy
     command:
       - "-c"
       - "/scalardb.properties"
@@ -37,7 +46,8 @@ services:
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
     depends_on:
-      - cassandra
+      scalardl-ledger-schema-loader-cassandra:
+        condition: service_completed_successfully
     environment:
       - SCALAR_DB_CONTACT_POINTS=cassandra
       - SCALAR_DB_STORAGE=cassandra
@@ -45,12 +55,12 @@ services:
       - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/ledger-key.pem
     networks:
       - scalar-network
-    # Overriding the CMD instruction in the scalar-ledger Dockerfile to add the -wait option.
-    command: |
-      dockerize -template ledger.properties.tmpl:ledger.properties
-      -template log4j2.properties.tmpl:log4j2.properties
-      -wait tcp://cassandra:9042 -timeout 60s
-      ./bin/scalar-ledger --config ledger.properties
+    healthcheck:
+      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:50051 && grpc_health_probe -addr=ledger-envoy:50051 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 10s
 
   ledger-envoy:
     image: ghcr.io/scalar-labs/scalar-envoy:1.3.0
@@ -60,7 +70,8 @@ services:
       - "50051:50051"
       - "50052:50052"
     depends_on:
-      - scalar-ledger
+      scalar-ledger:
+        condition: service_started
     environment:
       - admin_access_log_path=/dev/stdout
       - scalardl_address=scalar-ledger
