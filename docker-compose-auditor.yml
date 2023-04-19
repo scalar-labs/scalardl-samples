@@ -6,6 +6,9 @@ services:
       - SCHEMA_TYPE=auditor
     volumes:
       - ./scalardb.properties:/scalardb.properties
+    depends_on:
+      cassandra:
+        condition: service_healthy
     command:
       - "-c"
       - "/scalardb.properties"
@@ -23,8 +26,10 @@ services:
       - ./fixture/ledger.pem:/scalar/ledger.pem
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
     depends_on:
-      - ledger-envoy
-      - auditor-envoy
+      scalar-ledger:
+        condition: service_healthy
+      scalar-auditor:
+        condition: service_healthy
     environment:
       - SCALAR_DL_CLIENT_SERVER_HOST=ledger-envoy
       - SCALAR_DL_CLIENT_AUDITOR_HOST=auditor-envoy
@@ -47,8 +52,10 @@ services:
       - ./fixture/auditor.pem:/scalar/auditor.pem
       - ./fixture/auditor-key.pem:/scalar/auditor-key.pem
     depends_on:
-      - ledger-envoy
-      - auditor-envoy
+      scalar-ledger:
+        condition: service_healthy
+      scalar-auditor:
+        condition: service_healthy
     environment:
       - SCALAR_DL_CLIENT_SERVER_HOST=ledger-envoy
       - SCALAR_DL_CLIENT_AUDITOR_HOST=auditor-envoy
@@ -75,7 +82,8 @@ services:
       - ./fixture/auditor.pem:/scalar/auditor.pem
       - ./fixture/auditor-key.pem:/scalar/auditor-key.pem
     depends_on:
-      - cassandra
+      scalardl-auditor-schema-loader-cassandra:
+        condition: service_completed_successfully
     environment:
       - SCALAR_DB_CONTACT_POINTS=cassandra
       - SCALAR_DB_STORAGE=cassandra
@@ -84,12 +92,12 @@ services:
       - SCALAR_DL_AUDITOR_PRIVATE_KEY_PATH=/scalar/auditor-key.pem
     networks:
       - scalar-network
-    # Overriding the CMD instruction in the scalar-ledger Dockerfile to add the -wait option.
-    command: |
-      dockerize -template auditor.properties.tmpl:auditor.properties
-      -template log4j2.properties.tmpl:log4j2.properties
-      -wait tcp://cassandra:9042 -timeout 60s
-      ./bin/scalar-auditor --config auditor.properties
+    healthcheck:
+      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:40051 && grpc_health_probe -addr=auditor-envoy:40051 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 10s
 
   auditor-envoy:
     image: ghcr.io/scalar-labs/scalar-envoy:1.3.0
@@ -99,7 +107,8 @@ services:
       - "40051:40051"
       - "40052:40052"
     depends_on:
-      - scalar-auditor
+      scalar-auditor:
+        condition: service_started
     environment:
       - admin_access_log_path=/dev/stdout
       - scalardl_address=scalar-auditor
