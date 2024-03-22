@@ -73,6 +73,7 @@ services:
 
   scalar-auditor:
     image: ghcr.io/scalar-labs/scalar-auditor:4.0.0-SNAPSHOT
+    # image: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalar-auditor:4.0.0-SNAPSHOT
     container_name: "scalardl-samples-scalar-auditor-1"
     volumes:
       - ./fixture/auditor.pem:/scalar/auditor.pem
