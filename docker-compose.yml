@@ -42,6 +42,7 @@ services:
 
   scalar-ledger:
     image: ghcr.io/scalar-labs/scalar-ledger:4.0.0-SNAPSHOT
+    # image: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalar-ledger:4.0.0-SNAPSHOT
     container_name: "scalardl-samples-scalar-ledger-1"
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
