@@ -24,7 +24,7 @@ services:
       start_period: 30s
 
   scalardl-ledger-schema-loader-cassandra:
-    image: ghcr.io/scalar-labs/scalardl-schema-loader:4.0.0-SNAPSHOT
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:3.9.0
     volumes:
       - ./scalardb.properties:/scalardb.properties
     depends_on:
@@ -41,8 +41,8 @@ services:
     restart: on-failure
 
   scalar-ledger:
-    image: ghcr.io/scalar-labs/scalar-ledger:4.0.0-SNAPSHOT
-    # image: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalar-ledger:4.0.0-SNAPSHOT
+    image: ghcr.io/scalar-labs/scalar-ledger:3.9.0
+    # image: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalar-ledger:3.9.0
     container_name: "scalardl-samples-scalar-ledger-1"
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
@@ -64,7 +64,7 @@ services:
       start_period: 10s
 
   ledger-envoy:
-    image: ghcr.io/scalar-labs/scalar-envoy:2.0.0-SNAPSHOT
+    image: ghcr.io/scalar-labs/scalar-envoy:1.5.0
     container_name: "scalardl-samples-ledger-envoy-1"
     ports:
       - "9901:9901"
