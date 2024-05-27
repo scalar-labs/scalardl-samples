@@ -40,6 +40,8 @@ services:
     networks:
       - scalar-network
     command: |
+      dockerize -template client.properties.tmpl:client.properties
+      -template log4j2.properties.tmpl:log4j2.properties
       ./client/bin/register-cert --config client.properties
     restart: on-failure:5
 
@@ -64,6 +66,8 @@ services:
     networks:
       - scalar-network
     command: |
+      dockerize -template client.properties.tmpl:client.properties
+      -template log4j2.properties.tmpl:log4j2.properties
       ./client/bin/register-cert --config client.properties
     restart: on-failure:5
 
