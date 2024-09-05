@@ -76,12 +76,15 @@ services:
       - SCALAR_DL_LEDGER_AUDITOR_ENABLED=true
 
   scalar-auditor:
-    image: ghcr.io/scalar-labs/scalar-auditor:3.9.1
-    # image: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalar-auditor:3.9.1
+    image: ghcr.io/scalar-labs/scalardl-auditor-byol:3.9.1
     container_name: "scalardl-samples-scalar-auditor-1"
     volumes:
       - ./fixture/auditor.pem:/scalar/auditor.pem
       - ./fixture/auditor-key.pem:/scalar/auditor-key.pem
+      - ./fixture/auditor.properties.tmpl:/scalar/auditor/auditor.properties.tmpl
+      - ./fixture/trial-license-cert.pem:/scalar/license-cert.pem
+      # If you use commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
+      # - ./fixture/commercial-license-cert.pem:/scalar/license-cert.pem
     depends_on:
       scalardl-auditor-schema-loader-cassandra:
         condition: service_completed_successfully
@@ -91,6 +94,7 @@ services:
       - SCALAR_DL_AUDITOR_LEDGER_HOST=ledger-envoy
       - SCALAR_DL_AUDITOR_CERT_PATH=/scalar/auditor.pem
       - SCALAR_DL_AUDITOR_PRIVATE_KEY_PATH=/scalar/auditor-key.pem
+      - SCALAR_DL_LICENSING_LICENSE_KEY=<SET_YOUR_LICENSE_KEY>
     networks:
       - scalar-network
     healthcheck:
