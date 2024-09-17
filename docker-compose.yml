@@ -41,11 +41,14 @@ services:
     restart: on-failure
 
   scalar-ledger:
-    image: ghcr.io/scalar-labs/scalar-ledger:3.9.2
-    # image: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalar-ledger:3.9.2
+    image: ghcr.io/scalar-labs/scalardl-ledger-byol:3.9.2
     container_name: "scalardl-samples-scalar-ledger-1"
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
+      - ./fixture/ledger.properties.tmpl:/scalar/ledger/ledger.properties.tmpl
+      - ./fixture/trial-license-cert.pem:/scalar/license-cert.pem
+      # If you have a commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
+      # - ./fixture/commercial-license-cert.pem:/scalar/license-cert.pem
     depends_on:
       scalardl-ledger-schema-loader-cassandra:
         condition: service_completed_successfully
@@ -54,6 +57,11 @@ services:
       - SCALAR_DB_STORAGE=cassandra
       - SCALAR_DL_LEDGER_PROOF_ENABLED=true
       - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/ledger-key.pem
+
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+      - SCALAR_DL_LICENSING_LICENSE_KEY=<SET_YOUR_LICENSE_KEY>
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+
     networks:
       - scalar-network
     healthcheck:
