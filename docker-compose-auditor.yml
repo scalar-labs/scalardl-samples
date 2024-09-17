@@ -83,7 +83,7 @@ services:
       - ./fixture/auditor-key.pem:/scalar/auditor-key.pem
       - ./fixture/auditor.properties.tmpl:/scalar/auditor/auditor.properties.tmpl
       - ./fixture/trial-license-cert.pem:/scalar/license-cert.pem
-      # If you use commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
+      # If you have a commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
       # - ./fixture/commercial-license-cert.pem:/scalar/license-cert.pem
     depends_on:
       scalardl-auditor-schema-loader-cassandra:
