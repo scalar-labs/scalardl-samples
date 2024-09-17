@@ -94,7 +94,11 @@ services:
       - SCALAR_DL_AUDITOR_LEDGER_HOST=ledger-envoy
       - SCALAR_DL_AUDITOR_CERT_PATH=/scalar/auditor.pem
       - SCALAR_DL_AUDITOR_PRIVATE_KEY_PATH=/scalar/auditor-key.pem
+
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
       - SCALAR_DL_LICENSING_LICENSE_KEY=<SET_YOUR_LICENSE_KEY>
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+
     networks:
       - scalar-network
     healthcheck:
