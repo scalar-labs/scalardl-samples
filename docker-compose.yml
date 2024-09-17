@@ -24,7 +24,7 @@ services:
       start_period: 30s
 
   scalardl-ledger-schema-loader-cassandra:
-    image: ghcr.io/scalar-labs/scalardl-schema-loader:3.9.1
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:3.9.2
     volumes:
       - ./scalardb.properties:/scalardb.properties
     depends_on:
@@ -41,7 +41,7 @@ services:
     restart: on-failure
 
   scalar-ledger:
-    image: ghcr.io/scalar-labs/scalardl-ledger-byol:3.9.1
+    image: ghcr.io/scalar-labs/scalardl-ledger-byol:3.9.2
     container_name: "scalardl-samples-scalar-ledger-1"
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
