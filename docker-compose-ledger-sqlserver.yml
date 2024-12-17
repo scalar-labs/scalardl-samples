@@ -1,0 +1,70 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: "sqlserver-1"
+    environment:
+      MSSQL_PID: "Express"
+      SA_PASSWORD: "SqlServer22"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -C -U sa -P SqlServer22 -Q 'SELECT 1' || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  scalardl-ledger-schema-loader:
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:${SCALARDL_VERSION}
+    volumes:
+      - ./scalardb.sqlserver.properties:/scalardb.properties
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    command:
+      - "-c"
+      - "/scalardb.properties"
+      - "--coordinator"
+    networks:
+      - scalar-network
+    restart: on-failure
+
+  scalar-ledger:
+    image: ghcr.io/scalar-labs/scalardl-ledger-byol:${SCALARDL_VERSION}
+    container_name: "scalardl-samples-scalar-ledger-1"
+    volumes:
+      - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
+      - ./fixture/ledger.properties.tmpl:/scalar/ledger/ledger.properties.tmpl
+      - ./fixture/trial-license-cert.pem:/scalar/license-cert.pem
+      # If you have a commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
+      # - ./fixture/commercial-license-cert.pem:/scalar/license-cert.pem
+    depends_on:
+      scalardl-ledger-schema-loader:
+        condition: service_completed_successfully
+    environment:
+      - SCALAR_DB_CONTACT_POINTS=jdbc:sqlserver://sqlserver:1433;encrypt=true;trustServerCertificate=true
+      - SCALAR_DB_STORAGE=jdbc
+      - SCALAR_DB_USERNAME=sa
+      - SCALAR_DB_PASSWORD=SqlServer22
+      - SCALAR_DL_LEDGER_PROOF_ENABLED=true
+      - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/ledger-key.pem
+
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+      - SCALAR_DL_LICENSING_LICENSE_KEY=<SET_YOUR_LICENSE_KEY>
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:50051 && grpc_health_probe -addr=ledger-envoy:50051 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 10s
+
+networks:
+  scalar-network:
+    name: scalar-network

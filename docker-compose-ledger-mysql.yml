@@ -1,0 +1,68 @@
+services:
+  mysql:
+    image: mysql:8.1
+    container_name: "mysql-1"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -u root -pmysql -h 127.0.0.1 < /dev/null || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  scalardl-ledger-schema-loader:
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:${SCALARDL_VERSION}
+    volumes:
+      - ./scalardb.mysql.properties:/scalardb.properties
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command:
+      - "-c"
+      - "/scalardb.properties"
+      - "--coordinator"
+    networks:
+      - scalar-network
+    restart: on-failure
+
+  scalar-ledger:
+    image: ghcr.io/scalar-labs/scalardl-ledger-byol:${SCALARDL_VERSION}
+    container_name: "scalardl-samples-scalar-ledger-1"
+    volumes:
+      - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
+      - ./fixture/ledger.properties.tmpl:/scalar/ledger/ledger.properties.tmpl
+      - ./fixture/trial-license-cert.pem:/scalar/license-cert.pem
+      # If you have a commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
+      # - ./fixture/commercial-license-cert.pem:/scalar/license-cert.pem
+    depends_on:
+      scalardl-ledger-schema-loader:
+        condition: service_completed_successfully
+    environment:
+      - SCALAR_DB_CONTACT_POINTS=jdbc:mysql://mysql/
+      - SCALAR_DB_STORAGE=jdbc
+      - SCALAR_DB_USERNAME=root
+      - SCALAR_DB_PASSWORD=mysql
+      - SCALAR_DL_LEDGER_PROOF_ENABLED=true
+      - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/ledger-key.pem
+
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+      - SCALAR_DL_LICENSING_LICENSE_KEY=<SET_YOUR_LICENSE_KEY>
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:50051 && grpc_health_probe -addr=ledger-envoy:50051 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 10s
+
+networks:
+  scalar-network:
+    name: scalar-network
