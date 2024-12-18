@@ -1,3 +1,6 @@
+include:
+  - ./docker-compose-ledger-common.yml
+
 services:
   dynamodb:
     image: amazon/dynamodb-local:2.5.2
@@ -63,7 +66,3 @@ services:
       timeout: 10s
       retries: 60
       start_period: 10s
-
-networks:
-  scalar-network:
-    name: scalar-network

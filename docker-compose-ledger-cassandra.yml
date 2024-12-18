@@ -1,3 +1,6 @@
+include:
+  - ./docker-compose-ledger-common.yml
+
 services:
   cassandra:
     image: cassandra:3.11
@@ -61,7 +64,3 @@ services:
       timeout: 10s
       retries: 60
       start_period: 10s
-
-networks:
-  scalar-network:
-    name: scalar-network

@@ -1,3 +1,6 @@
+include:
+  - ./docker-compose-ledger-common.yml
+
 services:
   scalardl-ledger-schema-loader:
     image: ghcr.io/scalar-labs/scalardl-schema-loader:${SCALARDL_VERSION}
@@ -42,7 +45,3 @@ services:
       timeout: 10s
       retries: 60
       start_period: 10s
-
-networks:
-  scalar-network:
-    name: scalar-network
