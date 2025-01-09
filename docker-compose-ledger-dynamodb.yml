@@ -1,40 +1,34 @@
+include:
+  - ./docker-compose-ledger-common.yml
+
 services:
-  cassandra:
-    image: cassandra:3.11
-    container_name: "scalardl-samples-cassandra-1"
-    volumes:
-      - cassandra-data:/var/lib/cassandra
-    # ports:
-    #   - "7199:7199" # JMX
-    #   - "7000:7000" # cluster communication
-    #   - "7001:7001" # cluster communication (SSL)
-    #   - "9042:9042" # native protocol clients
-    #   - "9160:9160" # thrift clients
-    environment:
-      - CASSANDRA_DC=dc1
-      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  dynamodb:
+    image: amazon/dynamodb-local:2.5.2
+    container_name: "dynamodb-1"
+    ports:
+      - "8000:8000"
     networks:
       - scalar-network
     healthcheck:
-      test: ["CMD-SHELL", "cqlsh < /dev/null || exit 1"]
+      test: ["CMD-SHELL", '[ "$(curl -s -o /dev/null -I -w ''%{http_code}'' http://localhost:8000)" == "400" ] || exit 1']
       interval: 1s
       timeout: 10s
       retries: 60
       start_period: 30s
 
-  scalardl-ledger-schema-loader-cassandra:
+  scalardl-ledger-schema-loader:
     image: ghcr.io/scalar-labs/scalardl-schema-loader:${SCALARDL_VERSION}
     volumes:
-      - ./scalardb.properties:/scalardb.properties
+      - ./scalardb.dynamodb.properties:/scalardb.properties
     depends_on:
-      cassandra:
+      dynamodb:
         condition: service_healthy
     command:
       - "-c"
       - "/scalardb.properties"
       - "--coordinator"
-      - "--replication-factor"
-      - "1"
+      - "--no-backup"
+      - "--no-scaling"
     networks:
       - scalar-network
     restart: on-failure
@@ -49,11 +43,14 @@ services:
       # If you have a commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
       # - ./fixture/commercial-license-cert.pem:/scalar/license-cert.pem
     depends_on:
-      scalardl-ledger-schema-loader-cassandra:
+      scalardl-ledger-schema-loader:
         condition: service_completed_successfully
     environment:
-      - SCALAR_DB_CONTACT_POINTS=cassandra
-      - SCALAR_DB_STORAGE=cassandra
+      - SCALAR_DB_CONTACT_POINTS=sample
+      - SCALAR_DB_STORAGE=dynamo
+      - SCALAR_DB_USERNAME=sample
+      - SCALAR_DB_PASSWORD=sample
+      - SCALAR_DB_DYNAMO_ENDPOINT_OVERRIDE=http://dynamodb:8000
       - SCALAR_DL_LEDGER_PROOF_ENABLED=true
       - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/ledger-key.pem
 
@@ -69,28 +66,3 @@ services:
       timeout: 10s
       retries: 60
       start_period: 10s
-
-  ledger-envoy:
-    image: ghcr.io/scalar-labs/scalar-envoy:1.5.0
-    container_name: "scalardl-samples-ledger-envoy-1"
-    ports:
-      - "9901:9901"
-      - "50051:50051"
-      - "50052:50052"
-    depends_on:
-      scalar-ledger:
-        condition: service_started
-    environment:
-      - admin_access_log_path=/dev/stdout
-      - scalardl_address=scalar-ledger
-      - service_listeners=scalar-service:50051,scalar-privileged:50052
-      - envoy_tls=false
-    networks:
-      - scalar-network
-
-volumes:
-  cassandra-data:
-
-networks:
-  scalar-network:
-    name: scalar-network

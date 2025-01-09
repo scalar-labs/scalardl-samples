@@ -119,6 +119,9 @@ scalar.db.isolation_level={{ default .Env.SCALAR_DB_ISOLATION_LEVEL "" }}
 # If SNAPSHOT is specified, this is ignored.
 scalar.db.consensuscommit.serializable_strategy={{ default .Env.SCALAR_DB_CONSENSUSCOMMIT_SERIALIZABLE_STRATEGY "" }}
 
+# DynamoDB Endpoint override
+scalar.db.dynamo.endpoint_override={{ default .Env.SCALAR_DB_DYNAMO_ENDPOINT_OVERRIDE "" }}
+
 # License key
 scalar.dl.licensing.license_key={{ default .Env.SCALAR_DL_LICENSING_LICENSE_KEY "" }}
 scalar.dl.licensing.license_check_cert_path=/scalar/license-cert.pem

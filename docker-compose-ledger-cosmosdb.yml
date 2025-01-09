@@ -1,0 +1,47 @@
+include:
+  - ./docker-compose-ledger-common.yml
+
+services:
+  scalardl-ledger-schema-loader:
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:${SCALARDL_VERSION}
+    volumes:
+      - ./scalardb.cosmosdb.properties:/scalardb.properties
+    command:
+      - "-c"
+      - "/scalardb.properties"
+      - "--coordinator"
+    networks:
+      - scalar-network
+    restart: on-failure
+
+  scalar-ledger:
+    image: ghcr.io/scalar-labs/scalardl-ledger-byol:${SCALARDL_VERSION}
+    container_name: "scalardl-samples-scalar-ledger-1"
+    volumes:
+      - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
+      - ./fixture/ledger.properties.tmpl:/scalar/ledger/ledger.properties.tmpl
+      - ./fixture/trial-license-cert.pem:/scalar/license-cert.pem
+      # If you have a commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
+      # - ./fixture/commercial-license-cert.pem:/scalar/license-cert.pem
+    depends_on:
+      scalardl-ledger-schema-loader:
+        condition: service_completed_successfully
+    environment:
+      - SCALAR_DB_CONTACT_POINTS=<COSMOS_DB_FOR_NOSQL_URI>
+      - SCALAR_DB_STORAGE=cosmos
+      - SCALAR_DB_PASSWORD=<COSMOS_DB_FOR_NOSQL_KEY>
+      - SCALAR_DL_LEDGER_PROOF_ENABLED=true
+      - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/scalar/ledger-key.pem
+
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+      - SCALAR_DL_LICENSING_LICENSE_KEY=<SET_YOUR_LICENSE_KEY>
+      ##### PLEASE REPLACE THIS VALUE WITH YOUR LICENSE KEY #####
+
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:50051 && grpc_health_probe -addr=ledger-envoy:50051 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 10s
