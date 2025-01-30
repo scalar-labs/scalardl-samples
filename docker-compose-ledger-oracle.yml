@@ -33,9 +33,10 @@ services:
       - scalar-network
     restart: on-failure
 
-  scalar-ledger:
-    image: ghcr.io/scalar-labs/scalardl-ledger-byol:${SCALARDL_VERSION}
-    container_name: "scalardl-samples-scalar-ledger-1"
+  scalardl-ledger:
+    image: ghcr.io/scalar-labs/scalardl-ledger:${SCALARDL_VERSION}
+    # image: ghcr.io/scalar-labs/scalardl-ledger-byol:${SCALARDL_VERSION}
+    container_name: "scalardl-samples-scalardl-ledger-1"
     volumes:
       - ./fixture/ledger-key.pem:/scalar/ledger-key.pem
       - ./fixture/ledger.properties.tmpl:/scalar/ledger/ledger.properties.tmpl
