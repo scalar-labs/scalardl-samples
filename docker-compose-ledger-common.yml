@@ -7,11 +7,11 @@ services:
       - "50051:50051"
       - "50052:50052"
     depends_on:
-      scalar-ledger:
+      scalardl-ledger:
         condition: service_started
     environment:
       - admin_access_log_path=/dev/stdout
-      - scalardl_address=scalar-ledger
+      - scalardl_address=scalardl-ledger
       - service_listeners=scalar-service:50051,scalar-privileged:50052
       - envoy_tls=false
     networks:
