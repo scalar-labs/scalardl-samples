@@ -1,0 +1,58 @@
+include:
+  - ../common/docker-compose-ledger.yml
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: "postgres-1"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  scalardl-ledger-schema-loader:
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:${SCALARDL_VERSION}
+    volumes:
+      - ./ledger.properties:/scalardb.properties
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - "-c"
+      - "/scalardb.properties"
+      - "--coordinator"
+    networks:
+      - scalar-network
+    restart: on-failure
+
+  scalardl-ledger:
+    image: ghcr.io/scalar-labs/scalardl-ledger:${SCALARDL_VERSION}
+    # image: ghcr.io/scalar-labs/scalardl-ledger-byol:${SCALARDL_VERSION}
+    container_name: "scalardl-samples-scalardl-ledger-1"
+    volumes:
+      - ./ledger.properties:/scalar/ledger/ledger.properties.tmpl
+      - ../fixture/ledger-key.pem:/scalar/ledger-key.pem
+      - ../fixture/trial-license-cert.pem:/scalar/license-cert.pem
+      # If you have a commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
+      # - ../fixture/commercial-license-cert.pem:/scalar/license-cert.pem
+    depends_on:
+      scalardl-ledger-schema-loader:
+        condition: service_completed_successfully
+
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:50051 && grpc_health_probe -addr=ledger-envoy:50051 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 10s
