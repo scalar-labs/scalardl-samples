@@ -37,7 +37,7 @@ services:
     networks:
       - scalar-network
     healthcheck:
-      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:40051 && grpc_health_probe -addr=ledger-envoy:40051 || exit 1"]
+      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:40051 && grpc_health_probe -addr=auditor-envoy:40051 || exit 1"]
       interval: 1s
       timeout: 10s
       retries: 60
