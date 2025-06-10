@@ -1,0 +1,46 @@
+include:
+  - ./docker-compose-ledger.yml
+  - ../common/docker-compose-auditor.yml
+
+services:
+  scalardl-auditor-schema-loader:
+    image: ghcr.io/scalar-labs/scalardl-schema-loader:${SCALARDL_VERSION}
+    environment:
+      - SCHEMA_TYPE=auditor
+    volumes:
+      - ./auditor.properties:/scalardb.properties
+    depends_on:
+      dynamodb:
+        condition: service_healthy
+    command:
+      - "-c"
+      - "/scalardb.properties"
+      - "--coordinator"
+      - "--no-backup"
+      - "--no-scaling"
+    networks:
+      - scalar-network
+    restart: on-failure
+
+  scalardl-auditor:
+    image: ghcr.io/scalar-labs/scalardl-auditor:${SCALARDL_VERSION}
+    # image: ghcr.io/scalar-labs/scalardl-auditor-byol:${SCALARDL_VERSION}
+    container_name: "scalardl-samples-scalardl-auditor-1"
+    volumes:
+      - ./auditor.properties:/scalar/auditor/auditor.properties.tmpl
+      - ../fixture/auditor-key.pem:/scalar/auditor-key.pem
+      - ../fixture/trial-license-cert.pem:/scalar/license-cert.pem
+      # If you have a commercial license key, you must use `commercial-license-cert.pem` instead of `trial-license-cert.pem`.
+      # - ../fixture/commercial-license-cert.pem:/scalar/license-cert.pem
+    depends_on:
+      scalardl-auditor-schema-loader:
+        condition: service_completed_successfully
+
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD-SHELL", "grpc_health_probe -addr=localhost:40051 && grpc_health_probe -addr=auditor-envoy:40051 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 10s
