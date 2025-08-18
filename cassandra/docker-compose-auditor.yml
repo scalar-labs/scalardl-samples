@@ -10,7 +10,7 @@ services:
     volumes:
       - ./auditor.properties:/scalardb.properties
     depends_on:
-      mysql:
+      cassandra:
         condition: service_healthy
     command:
       - "-c"
