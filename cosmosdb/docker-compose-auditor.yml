@@ -12,14 +12,12 @@ services:
     command:
       - "-c"
       - "/scalardb.properties"
-      - "--coordinator"
     networks:
       - scalar-network
     restart: on-failure
 
   scalardl-auditor:
-    image: ghcr.io/scalar-labs/scalardl-auditor:${SCALARDL_VERSION}
-    # image: ghcr.io/scalar-labs/scalardl-auditor-byol:${SCALARDL_VERSION}
+    image: ghcr.io/scalar-labs/scalardl-auditor-byol:${SCALARDL_VERSION}
     container_name: "scalardl-samples-scalardl-auditor-1"
     volumes:
       - ./auditor.properties:/scalar/auditor/auditor.properties.tmpl
